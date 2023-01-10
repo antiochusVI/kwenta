@@ -171,7 +171,7 @@ export const MarketKeyByAsset: Record<FuturesMarketAsset, FuturesMarketKey> = {
 
 export const marketOverrides: Partial<Record<FuturesMarketKey, Record<string, any>>> = {
 	[FuturesMarketKey.sETHPERP]: {
-		maxLeverage: wei(25),
+		maxLeverage: wei(100),
 	},
 };
 
