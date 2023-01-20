@@ -14,6 +14,7 @@ import Table from 'components/Table';
 import { DEFAULT_CRYPTO_DECIMALS } from 'constants/defaults';
 import ROUTES from 'constants/routes';
 import Connector from 'containers/Connector';
+import { getDisplayAsset } from 'sdk/utils/futures';
 import { selectFuturesType, selectMarkets, selectMarketVolumes } from 'state/futures/selectors';
 import { useAppSelector } from 'state/hooks';
 import { selectPrices } from 'state/prices/selectors';
@@ -35,7 +36,7 @@ const FuturesMarketsTable: FC = () => {
 		return futuresMarkets.map((market) => {
 			const description = getSynthDescription(market.asset, synthsMap, t);
 			const volume = futuresVolumes[market.marketKey]?.volume;
-			const pastPrice = pastRates.find((price) => price.synth === market.asset);
+			const pastPrice = pastRates.find((price) => price.synth === getDisplayAsset(market.asset));
 			const marketPrice = prices[market.asset]?.offChain ?? prices[market.asset]?.onChain ?? wei(0);
 
 			return {
@@ -47,7 +48,7 @@ const FuturesMarketsTable: FC = () => {
 				volume: volume?.toNumber() ?? 0,
 				pastPrice: pastPrice?.price,
 				priceChange: pastPrice?.price && marketPrice.sub(pastPrice?.price).div(marketPrice),
-				fundingRate: market.currentFundingRate ?? null,
+				fundingRate: market.currentFundingRate.div(marketPrice) ?? null,
 				openInterest: market.marketSize.mul(marketPrice),
 				openInterestNative: market.marketSize,
 				longInterest: market.marketSize.add(market.marketSkew).div('2').abs().mul(marketPrice),
